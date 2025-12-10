@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>微信公众号封面生成器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        .form-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #555;
+            font-size: 14px;
+        }
+
+        input[type="text"], textarea, select {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
+        }
+
+        input[type="color"] {
+            width: 60px;
+            height: 40px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .preview-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .preview-label {
+            font-weight: 600;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .cover-preview {
+            width: 500px;
+            height: 213px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .cover-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .cover-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .cover-title {
+            font-size: 36px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            word-wrap: break-word;
+            max-width: 100%;
+        }
+
+        .cover-subtitle {
+            font-size: 18px;
+            color: white;
+            opacity: 0.95;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            word-wrap: break-word;
+            max-width: 100%;
+        }
+
+        .download-btn {
+            margin-top: 15px;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .download-btn:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 1100px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+            
+            .preview-section {
+                margin-top: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .cover-preview {
+                width: 100%;
+                height: auto;
+                aspect-ratio: 2.35 / 1;
+            }
+
+            .cover-title {
+                font-size: 24px;
+            }
+
+            .cover-subtitle {
+                font-size: 14px;
+            }
+
+            .cover-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 微信公众号封面生成器</h1>
+        
+        <div class="content-wrapper">
+            <div class="form-section">
+                <div class="form-group">
+                    <label for="title">主标题</label>
+                    <input type="text" id="title" placeholder="输入主标题" value="您的公众号标题">
+                </div>
+
+                <div class="form-group">
+                    <label for="subtitle">副标题</label>
+                    <textarea id="subtitle" placeholder="输入副标题或描述">精彩内容，每日更新</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="bgColor1">背景渐变色1</label>
+                    <input type="color" id="bgColor1" value="#667eea">
+                </div>
+
+                <div class="form-group">
+                    <label for="bgColor2">背景渐变色2</label>
+                    <input type="color" id="bgColor2" value="#764ba2">
+                </div>
+
+                <div class="form-group">
+                    <label for="textColor">文字颜色</label>
+                    <input type="color" id="textColor" value="#ffffff">
+                </div>
+            </div>
+
+            <div class="preview-section">
+                <div class="preview-label">实时预览 (900×383px)</div>
+                <div class="cover-preview" id="coverPreview">
+                    <div class="cover-background" id="coverBg"></div>
+                    <div class="cover-content">
+                        <div class="cover-title" id="previewTitle">您的公众号标题</div>
+                        <div class="cover-subtitle" id="previewSubtitle">精彩内容，每日更新</div>
+                    </div>
+                </div>
+                <button class="download-btn" onclick="downloadCover()">📥 下载封面</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        const titleInput = document.getElementById('title');
+        const subtitleInput = document.getElementById('subtitle');
+        const bgColor1Input = document.getElementById('bgColor1');
+        const bgColor2Input = document.getElementById('bgColor2');
+        const textColorInput = document.getElementById('textColor');
+        
+        const previewTitle = document.getElementById('previewTitle');
+        const previewSubtitle = document.getElementById('previewSubtitle');
+        const coverBg = document.getElementById('coverBg');
+
+        function updatePreview() {
+            previewTitle.textContent = titleInput.value || '您的公众号标题';
+            previewSubtitle.textContent = subtitleInput.value || '精彩内容，每日更新';
+            
+            const color1 = bgColor1Input.value;
+            const color2 = bgColor2Input.value;
+            coverBg.style.background = `linear-gradient(135deg, ${color1} 0%, ${color2} 100%)`;
+            
+            const textColor = textColorInput.value;
+            previewTitle.style.color = textColor;
+            previewSubtitle.style.color = textColor;
+        }
+
+        titleInput.addEventListener('input', updatePreview);
+        subtitleInput.addEventListener('input', updatePreview);
+        bgColor1Input.addEventListener('input', updatePreview);
+        bgColor2Input.addEventListener('input', updatePreview);
+        textColorInput.addEventListener('input', updatePreview);
+
+        async function downloadCover() {
+            const cover = document.getElementById('coverPreview');
+            
+            try {
+                const canvas = await html2canvas(cover, {
+                    scale: 2,
+                    backgroundColor: null,
+                    logging: false,
+                    width: 900,
+                    height: 383
+                });
+                
+                const link = document.createElement('a');
+                link.download = '公众号封面.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            } catch (error) {
+                console.error('下载失败:', error);
+                alert('下载失败，请重试');
+            }
+        }
+    </script>
+</body>
+</html>
